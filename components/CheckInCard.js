@@ -12,8 +12,11 @@ import axios from "axios"
 
 const PINATA_API_KEY = process.env.NEXT_PUBLIC_PINATA_API_KEY
 const PINATA_API_SECRET = process.env.NEXT_PUBLIC_PINATA_API_SECRET
+import { useToast } from "@/components/ui/use-toast"
 
 const CheckInCard = () => {
+  const { toast } = useToast()
+
   const [zkProofInput, setZkProofInput] = useState({
     longitude: 0,
     minLongitude: 0,
@@ -78,9 +81,36 @@ const CheckInCard = () => {
       console.log("IPFS CID:", cid)
 
       const tx = await executeTransaction(proof, publicSignals, cid)
+      const explorerUrl = `https://sepolia.etherscan.io/tx/${tx.hash}`
       console.log(tx)
+      toast({
+        title: "Successful",
+        description: (
+          <div>
+            Transaction Hash:
+            <a
+              href={explorerUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: "#3182ce", textDecoration: "underline" }}
+            >
+              {`${tx.hash}`}
+            </a>
+          </div>
+        ),
+        status: "success",
+        duration: 5000, // 持续时间 (ms)
+        isClosable: true // 是否可关闭
+      })
     } catch (error) {
       console.error("Error uploading to IPFS: ", error)
+      toast({
+        title: "Failed",
+        description: error.message,
+        status: "error",
+        duration: 5000, // 持续时间 (ms)
+        isClosable: true // 是否可关闭
+      })
     }
   }
 

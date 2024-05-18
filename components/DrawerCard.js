@@ -35,10 +35,10 @@ export default function DrawerCard() {
           <CheckInCard />
           <ProofListCard proofs={proofs} />
           <DrawerFooter>
-            <Button>Submit</Button>
+            {/* <Button>Submit</Button>
             <DrawerClose>
               <Button variant="outline">Cancel</Button>
-            </DrawerClose>
+            </DrawerClose> */}
           </DrawerFooter>
         </DrawerContent>
       </Drawer>
