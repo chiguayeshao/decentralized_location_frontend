@@ -2,6 +2,7 @@ import Head from "next/head"
 import styles from "../styles/Home.module.css"
 import DrawerCard from "@/components/DrawerCard"
 import dynamic from "next/dynamic"
+import { ConnectButton } from "@rainbow-me/rainbowkit"
 
 // 使用 dynamic 导入 Google 地图组件，以确保只在客户端加载
 const Map = dynamic(() => import("../components/Map"), {
@@ -19,6 +20,7 @@ const Home = () => {
       </Head>
 
       <main className={styles.main}>
+        <ConnectButton />
         <div className="w-full h-[600px]">
           <Map />
         </div>

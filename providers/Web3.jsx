@@ -8,12 +8,14 @@ import {
   mainnet,
   optimism,
   polygon,
-  zora
+  zora,
+  sepolia
 } from "wagmi/chains"
 import { publicProvider } from "wagmi/providers/public"
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [
+    sepolia,
     mainnet,
     polygon,
     optimism,

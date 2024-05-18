@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState, useEffect } from "react"
 import {
   Card,
   CardContent,
@@ -7,8 +7,47 @@ import {
   CardDescription
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { generateProof, executeTransaction } from "@/lib/zkProofs"
 
 const CheckInCard = () => {
+  const [zkProofInput, setZkProofInput] = useState({
+    longitude: 0,
+    minLongitude: 0,
+    maxLongitude: 0,
+    latitude: 0,
+    minLatitude: 0,
+    maxLatitude: 0
+  })
+
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition((position) => {
+      //   console.log(position)
+      //   setCurrentPosition({
+      //     lat: position.coords.latitude,
+      //     lng: position.coords.longitude
+      //   })
+      const longitude = Number(position.coords.longitude) * 10 ** 7
+      const latitude = Number(position.coords.latitude) * 10 ** 7
+
+      setZkProofInput({
+        longitude: longitude,
+        minLongitude: longitude - 1,
+        maxLongitude: longitude + 1,
+        latitude: latitude,
+        minLatitude: latitude - 1,
+        maxLatitude: latitude + 1
+      })
+    })
+  }, [])
+
+  const handleCheckIn = async () => {
+    const { proof, publicSignals } = await generateProof(zkProofInput)
+    console.log("proof", proof)
+    console.log("publicSignals", publicSignals)
+    const tx = await executeTransaction(proof, publicSignals, "000")
+    console.log(tx)
+  }
+
   return (
     <Card style={{ marginBottom: "20px" }}>
       <CardHeader>
@@ -76,7 +115,14 @@ const CheckInCard = () => {
             {/* <CardDescription>简介：这是签到场地的简介。</CardDescription> */}
           </div>
         </div>
-        <Button variant="outline" style={{ marginTop: "0px" }}>
+        <Button
+          variant="outline"
+          style={{ marginTop: "0px" }}
+          onClick={() => {
+            console.log("zkProofInput", zkProofInput)
+            handleCheckIn()
+          }}
+        >
           签到
         </Button>
       </CardContent>
