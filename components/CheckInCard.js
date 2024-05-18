@@ -17,6 +17,8 @@ import { useToast } from "@/components/ui/use-toast"
 const CheckInCard = () => {
   const { toast } = useToast()
 
+  const [loading, setLoading] = useState(true)
+
   const testBorder = {
     longitude: 114.1693611,
     latitude: 22.3193039
@@ -51,10 +53,12 @@ const CheckInCard = () => {
         minLatitude: minLatitude,
         maxLatitude: maxLatitude
       })
+      setLoading(false)
     })
   }, [])
 
   const handleCheckIn = async () => {
+    console.log(zkProofInput, "zkProofInput")
     const { proof, publicSignals } = await generateProof(zkProofInput)
     console.log("proof", proof)
     console.log("publicSignals", publicSignals)
@@ -135,6 +139,9 @@ const CheckInCard = () => {
         })
       }
     }
+  }
+  if (loading) {
+    return <div>Loading...</div>
   }
 
   return (
