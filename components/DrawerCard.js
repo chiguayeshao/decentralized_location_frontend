@@ -23,7 +23,7 @@ export default function DrawerCard() {
     <div>
       <Drawer>
         <DrawerTrigger>
-          <Button variant="outline">CHECK IN</Button>
+          <Button variant="outline">MINT PROOF</Button>
         </DrawerTrigger>
         <DrawerContent>
           <DrawerHeader>

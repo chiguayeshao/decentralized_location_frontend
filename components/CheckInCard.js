@@ -230,7 +230,7 @@ const CheckInCard = () => {
           }}
           disabled={buttonLoading}
         >
-          {buttonLoading ? "Loading..." : "CHECK IN"}
+          {buttonLoading ? "Loading..." : "MINT PROOF"}
         </Button>
       </CardContent>
     </Card>
