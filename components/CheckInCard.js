@@ -13,6 +13,11 @@ import { useToast } from "@/components/ui/use-toast"
 const CheckInCard = () => {
   const { toast } = useToast()
 
+  const testBorder = {
+    longitude: 114.1693611,
+    latitude: 22.3193039
+  }
+
   const [zkProofInput, setZkProofInput] = useState({
     longitude: 0,
     minLongitude: 0,
@@ -24,67 +29,84 @@ const CheckInCard = () => {
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition((position) => {
-      //   console.log(position)
       //   setCurrentPosition({
       //     lat: position.coords.latitude,
       //     lng: position.coords.longitude
       //   })
       const longitude = Number(position.coords.longitude) * 10 ** 7
       const latitude = Number(position.coords.latitude) * 10 ** 7
+      const minLongitude = Number(testBorder.longitude) * 10 ** 7 - 1000
+      const maxLongitude = Number(testBorder.longitude) * 10 ** 7 + 1000
+      const minLatitude = Number(testBorder.latitude) * 10 ** 7 - 1000
+      const maxLatitude = Number(testBorder.latitude) * 10 ** 7 + 1000
+
+      console.log(longitude, latitude)
+      console.log(minLongitude, maxLongitude, minLatitude, maxLatitude)
 
       setZkProofInput({
         longitude: longitude,
-        minLongitude: longitude - 1,
-        maxLongitude: longitude + 1,
+        minLongitude: minLongitude,
+        maxLongitude: maxLongitude,
         latitude: latitude,
-        minLatitude: latitude - 1,
-        maxLatitude: latitude + 1
+        minLatitude: minLatitude,
+        maxLatitude: maxLatitude
       })
     })
   }, [])
 
   const handleCheckIn = async () => {
-    try {
-      const { proof, publicSignals } = await generateProof(zkProofInput)
-      console.log("proof", proof)
-      console.log("publicSignals", publicSignals)
+    const { proof, publicSignals } = await generateProof(zkProofInput)
+    console.log("proof", proof)
+    console.log("publicSignals", publicSignals)
 
-      const tx = await executeTransaction(proof, publicSignals, "000")
-      console.log(tx)
-
-      const explorerUrl = `https://sepolia.etherscan.io/tx/${tx.hash}` // 或者其他区块浏览器的 URL
-
-      // 成功提示
+    if (proof == "") {
       toast({
-        title: "Successful",
-        description: (
-          <div>
-            Transaction Hash:
-            <a
-              href={explorerUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ color: "#3182ce", textDecoration: "underline" }}
-            >
-              {`${tx.hash}`}
-            </a>
-          </div>
-        ),
-        status: "success",
-        duration: 5000, // 持续时间 (ms)
-        isClosable: true // 是否可关闭
-      })
-    } catch (error) {
-      console.error("Transaction failed:", error)
-
-      // 失败提示
-      toast({
-        title: "Failed",
-        description: error.message,
+        title: "Unable to generate proof",
+        description:
+          "Please check if the current location meets the activity requirements",
         status: "error",
         duration: 5000, // 持续时间 (ms)
         isClosable: true // 是否可关闭
       })
+    } else {
+      try {
+        const tx = await executeTransaction(proof, publicSignals, "000")
+        console.log(tx)
+
+        const explorerUrl = `https://sepolia.etherscan.io/tx/${tx.hash}` // 或者其他区块浏览器的 URL
+
+        // 成功提示
+        toast({
+          title: "Successful",
+          description: (
+            <div>
+              Transaction Hash:
+              <a
+                href={explorerUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: "#3182ce", textDecoration: "underline" }}
+              >
+                {`${tx.hash}`}
+              </a>
+            </div>
+          ),
+          status: "success",
+          duration: 5000, // 持续时间 (ms)
+          isClosable: true // 是否可关闭
+        })
+      } catch (error) {
+        console.error("Transaction failed:", error)
+
+        // 失败提示
+        toast({
+          title: "Failed",
+          description: error.message,
+          status: "error",
+          duration: 5000, // 持续时间 (ms)
+          isClosable: true // 是否可关闭
+        })
+      }
     }
   }
 
