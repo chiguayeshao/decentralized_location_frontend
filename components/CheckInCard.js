@@ -116,8 +116,8 @@ const CheckInCard = () => {
         toast({
           title: "Successful",
           description: (
-            <div>
-              Transaction Hash:
+            <div className="flex flex-row gap-2">
+              <div>Transaction Hash:</div>
               <a
                 href={explorerUrl}
                 target="_blank"
