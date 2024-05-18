@@ -2,6 +2,8 @@ import * as snarkjs from 'snarkjs';
 import path from 'path';
 import { prepareWriteContract, writeContract, WriteContractResult } from "@wagmi/core"
 
+const CONTRACT_ADDRESS = '0x11f51b05e6ec6ff477821f7ac3379c77c8d6339a' as `0x${string}`;
+
 type ZkProofInput = {
   longitude: number;
   minLongitude: number;
@@ -53,17 +55,18 @@ export const generateProof = async (args: ZkProofInput) => {
  * Execute a transaction to submit the proof to the contract
  * @param proof The proof to submit
  * @param publicSignals The public signals to submit
+ * @param ipfsCid ipfs cid of the proof
  * @returns The transaction receipt
  */
-export const executeTransaction = async (proof: any, publicSignals: Array<string>): Promise<WriteContractResult> => {
-  const abiPath = require('./abi/SimpleSummarizer.json');
+export const executeTransaction = async (proof: any, publicSignals: Array<string>, ipfsCid: string): Promise<WriteContractResult> => {
+  const abiPath = require('./abi/ZKLocationProofToken.json');
 
   // Prepare the transaction data
   const config = await prepareWriteContract({
-    address: '0xbfa57510adead881d7e77749e23fa65ff4e93956' as `0x${string}`,
+    address: CONTRACT_ADDRESS,
     abi: abiPath.abi,
     functionName: 'submitProof',
-    args: [proof, publicSignals]
+    args: [proof, publicSignals, ipfsCid]
   });
 
   // Execute the transaction

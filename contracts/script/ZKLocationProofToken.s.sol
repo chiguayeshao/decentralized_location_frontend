@@ -3,9 +3,9 @@ pragma solidity ^0.8.13;
 
 import "forge-std/Script.sol";
 import "../src/PlonkVerifier.sol";
-import "../src/SimpleSummarizer.sol";
+import "../src/ZKLocationProofToken.sol";
 
-contract SimpleSummarizerScript is Script {
+contract ZKLocationProofTokenScript is Script {
     function setUp() public {}
 
     function run() public {
@@ -13,7 +13,7 @@ contract SimpleSummarizerScript is Script {
         vm.startBroadcast(deployerPrivateKey);
 
         PlonkVerifier pv = new PlonkVerifier();
-        SimpleSummarizer sm = new SimpleSummarizer(address(pv));
+        ZKLocationProofToken sm = new ZKLocationProofToken(address(pv));
 
         vm.stopBroadcast();
     }
