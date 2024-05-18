@@ -8,8 +8,11 @@ import {
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { generateProof, executeTransaction } from "@/lib/zkProofs"
+import { useToast } from "@/components/ui/use-toast"
 
 const CheckInCard = () => {
+  const { toast } = useToast()
+
   const [zkProofInput, setZkProofInput] = useState({
     longitude: 0,
     minLongitude: 0,
@@ -41,11 +44,48 @@ const CheckInCard = () => {
   }, [])
 
   const handleCheckIn = async () => {
-    const { proof, publicSignals } = await generateProof(zkProofInput)
-    console.log("proof", proof)
-    console.log("publicSignals", publicSignals)
-    const tx = await executeTransaction(proof, publicSignals, "000")
-    console.log(tx)
+    try {
+      const { proof, publicSignals } = await generateProof(zkProofInput)
+      console.log("proof", proof)
+      console.log("publicSignals", publicSignals)
+
+      const tx = await executeTransaction(proof, publicSignals, "000")
+      console.log(tx)
+
+      const explorerUrl = `https://sepolia.etherscan.io/tx/${tx.hash}` // 或者其他区块浏览器的 URL
+
+      // 成功提示
+      toast({
+        title: "Successful",
+        description: (
+          <div>
+            Transaction Hash:
+            <a
+              href={explorerUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: "#3182ce", textDecoration: "underline" }}
+            >
+              {`${tx.hash}`}
+            </a>
+          </div>
+        ),
+        status: "success",
+        duration: 5000, // 持续时间 (ms)
+        isClosable: true // 是否可关闭
+      })
+    } catch (error) {
+      console.error("Transaction failed:", error)
+
+      // 失败提示
+      toast({
+        title: "Failed",
+        description: error.message,
+        status: "error",
+        duration: 5000, // 持续时间 (ms)
+        isClosable: true // 是否可关闭
+      })
+    }
   }
 
   return (
