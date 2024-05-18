@@ -610,9 +610,9 @@
     "@babel/runtime" "^7.13.10"
 
 "@radix-ui/react-collection@1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@radix-ui/react-collection/-/react-collection-1.0.3.tgz#9595a66e09026187524a36c6e7e9c7d286469159"
-  integrity sha512-3SzW+0PW7yBBoQlT8wNcGtaxaD0XSu0uLUFgrtHY08Acx05TaHaOmVLR73c0j/cqpDy53KBMO7s0dx2wmOIDIA==
+  "integrity" "sha512-3SzW+0PW7yBBoQlT8wNcGtaxaD0XSu0uLUFgrtHY08Acx05TaHaOmVLR73c0j/cqpDy53KBMO7s0dx2wmOIDIA=="
+  "resolved" "https://registry.npmmirror.com/@radix-ui/react-collection/-/react-collection-1.0.3.tgz"
+  "version" "1.0.3"
   dependencies:
     "@babel/runtime" "^7.13.10"
     "@radix-ui/react-compose-refs" "1.0.1"
@@ -726,9 +726,9 @@
     "@radix-ui/react-compose-refs" "1.0.1"
 
 "@radix-ui/react-toast@^1.1.5":
-  version "1.1.5"
-  resolved "https://registry.yarnpkg.com/@radix-ui/react-toast/-/react-toast-1.1.5.tgz#f5788761c0142a5ae9eb97f0051fd3c48106d9e6"
-  integrity sha512-fRLn227WHIBRSzuRzGJ8W+5YALxofH23y0MlPLddaIpLpCDqdE0NZlS2NRQDRiptfxDeeCjgFIpexB1/zkxDlw==
+  "integrity" "sha512-fRLn227WHIBRSzuRzGJ8W+5YALxofH23y0MlPLddaIpLpCDqdE0NZlS2NRQDRiptfxDeeCjgFIpexB1/zkxDlw=="
+  "resolved" "https://registry.npmmirror.com/@radix-ui/react-toast/-/react-toast-1.1.5.tgz"
+  "version" "1.1.5"
   dependencies:
     "@babel/runtime" "^7.13.10"
     "@radix-ui/primitive" "1.0.1"
@@ -775,9 +775,9 @@
     "@babel/runtime" "^7.13.10"
 
 "@radix-ui/react-visually-hidden@1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@radix-ui/react-visually-hidden/-/react-visually-hidden-1.0.3.tgz#51aed9dd0fe5abcad7dee2a234ad36106a6984ac"
-  integrity sha512-D4w41yN5YRKtu464TLnByKzMDG/JlMPHtfZgQAu9v6mNakUqGUI9vUrfQKz8NK41VMm/xbZbh76NUTVtIYqOMA==
+  "integrity" "sha512-D4w41yN5YRKtu464TLnByKzMDG/JlMPHtfZgQAu9v6mNakUqGUI9vUrfQKz8NK41VMm/xbZbh76NUTVtIYqOMA=="
+  "resolved" "https://registry.npmmirror.com/@radix-ui/react-visually-hidden/-/react-visually-hidden-1.0.3.tgz"
+  "version" "1.0.3"
   dependencies:
     "@babel/runtime" "^7.13.10"
     "@radix-ui/react-primitive" "1.0.3"
@@ -3998,7 +3998,7 @@
   dependencies:
     "yallist" "^4.0.0"
 
-"lucide-react@0.105.0-alpha.4":
+"lucide-react@^0.105.0-alpha.4":
   "integrity" "sha512-QclWOzKYj7sDW33jTQK4enmxL1LmI2SHFqEEP56EWhvs4mmlbbFe6ALYcdcdGysNISNovEbH5WBHg8tN5DLn0w=="
   "resolved" "https://registry.npmmirror.com/lucide-react/-/lucide-react-0.105.0-alpha.4.tgz"
   "version" "0.105.0-alpha.4"

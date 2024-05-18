@@ -12,7 +12,6 @@ import {
 import { Button } from "@/components/ui/button"
 import React from "react"
 import CheckInCard from "@/components/CheckInCard"
-import ProofListCard from "@/components/ProofListCard"
 
 export default function DrawerCard() {
   const proofs = [
@@ -33,7 +32,6 @@ export default function DrawerCard() {
             <DrawerDescription>立刻生成你的proof参与活动</DrawerDescription>
           </DrawerHeader>
           <CheckInCard />
-          <ProofListCard proofs={proofs} />
           <DrawerFooter>
             {/* <Button>Submit</Button>
             <DrawerClose>

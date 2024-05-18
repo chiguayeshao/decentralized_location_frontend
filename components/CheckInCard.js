@@ -9,13 +9,15 @@ import {
 import { Button } from "@/components/ui/button"
 import { generateProof, executeTransaction } from "@/lib/zkProofs"
 import axios from "axios"
+import { Loader } from "lucide-react"
+import { useToast } from "@/components/ui/use-toast"
 
 const PINATA_API_KEY = process.env.NEXT_PUBLIC_PINATA_API_KEY
 const PINATA_API_SECRET = process.env.NEXT_PUBLIC_PINATA_API_SECRET
-import { useToast } from "@/components/ui/use-toast"
 
 const CheckInCard = () => {
   const { toast } = useToast()
+  const [loading, setLoading] = useState(false)
 
   const [zkProofInput, setZkProofInput] = useState({
     longitude: 0,
@@ -42,28 +44,33 @@ const CheckInCard = () => {
     })
   }, [])
 
+  const formatTxHash = (hash) => {
+    return `${hash.slice(0, 6)}...${hash.slice(-6)}`
+  }
+
   const handleCheckIn = async () => {
-    const { proof, publicSignals } = await generateProof(zkProofInput)
-    console.log("proof", proof)
-    console.log("publicSignals", publicSignals)
-
-    const formData = new FormData()
-    formData.append("file", new Blob([proof], { type: "application/json" }))
-
-    const metadata = JSON.stringify({
-      name: "zkProof",
-      keyvalues: {
-        exampleKey: "exampleValue"
-      }
-    })
-    formData.append("pinataMetadata", metadata)
-
-    const options = JSON.stringify({
-      cidVersion: 0
-    })
-    formData.append("pinataOptions", options)
-
+    setLoading(true)
     try {
+      const { proof, publicSignals } = await generateProof(zkProofInput)
+      console.log("proof", proof)
+      console.log("publicSignals", publicSignals)
+
+      const formData = new FormData()
+      formData.append("file", new Blob([proof], { type: "application/json" }))
+
+      const metadata = JSON.stringify({
+        name: "zkProof",
+        keyvalues: {
+          exampleKey: "exampleValue"
+        }
+      })
+      formData.append("pinataMetadata", metadata)
+
+      const options = JSON.stringify({
+        cidVersion: 0
+      })
+      formData.append("pinataOptions", options)
+
       const response = await axios.post(
         "https://api.pinata.cloud/pinning/pinFileToIPFS",
         formData,
@@ -86,21 +93,21 @@ const CheckInCard = () => {
       toast({
         title: "Successful",
         description: (
-          <div>
-            Transaction Hash:
+          <div className="flex flex-row gap-2">
+            <div>Transaction Hash:</div>
             <a
               href={explorerUrl}
               target="_blank"
               rel="noopener noreferrer"
               style={{ color: "#3182ce", textDecoration: "underline" }}
             >
-              {`${tx.hash}`}
+              {formatTxHash(tx.hash)}
             </a>
           </div>
         ),
         status: "success",
-        duration: 5000, // 持续时间 (ms)
-        isClosable: true // 是否可关闭
+        duration: 5000,
+        isClosable: true
       })
     } catch (error) {
       console.error("Error uploading to IPFS: ", error)
@@ -108,9 +115,11 @@ const CheckInCard = () => {
         title: "Failed",
         description: error.message,
         status: "error",
-        duration: 5000, // 持续时间 (ms)
-        isClosable: true // 是否可关闭
+        duration: 5000,
+        isClosable: true
       })
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -188,8 +197,16 @@ const CheckInCard = () => {
             console.log("zkProofInput", zkProofInput)
             handleCheckIn()
           }}
+          disabled={loading}
         >
-          签到
+          {loading ? (
+            <div className="flex flex-row gap-2">
+              <Loader className="mr-2 h-4 w-4 animate-spin" />
+              <div>Loading....</div>
+            </div>
+          ) : (
+            "签到"
+          )}
         </Button>
       </CardContent>
     </Card>
