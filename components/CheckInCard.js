@@ -8,6 +8,10 @@ import {
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { generateProof, executeTransaction } from "@/lib/zkProofs"
+import axios from "axios"
+
+const PINATA_API_KEY = process.env.NEXT_PUBLIC_PINATA_API_KEY
+const PINATA_API_SECRET = process.env.NEXT_PUBLIC_PINATA_API_SECRET
 
 const CheckInCard = () => {
   const [zkProofInput, setZkProofInput] = useState({
@@ -21,11 +25,6 @@ const CheckInCard = () => {
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition((position) => {
-      //   console.log(position)
-      //   setCurrentPosition({
-      //     lat: position.coords.latitude,
-      //     lng: position.coords.longitude
-      //   })
       const longitude = Number(position.coords.longitude) * 10 ** 7
       const latitude = Number(position.coords.latitude) * 10 ** 7
 
@@ -44,8 +43,45 @@ const CheckInCard = () => {
     const { proof, publicSignals } = await generateProof(zkProofInput)
     console.log("proof", proof)
     console.log("publicSignals", publicSignals)
-    const tx = await executeTransaction(proof, publicSignals, "000")
-    console.log(tx)
+
+    const formData = new FormData()
+    formData.append("file", new Blob([proof], { type: "application/json" }))
+
+    const metadata = JSON.stringify({
+      name: "zkProof",
+      keyvalues: {
+        exampleKey: "exampleValue"
+      }
+    })
+    formData.append("pinataMetadata", metadata)
+
+    const options = JSON.stringify({
+      cidVersion: 0
+    })
+    formData.append("pinataOptions", options)
+
+    try {
+      const response = await axios.post(
+        "https://api.pinata.cloud/pinning/pinFileToIPFS",
+        formData,
+        {
+          maxBodyLength: "Infinity",
+          headers: {
+            "Content-Type": `multipart/form-data; boundary=${formData._boundary}`,
+            pinata_api_key: PINATA_API_KEY,
+            pinata_secret_api_key: PINATA_API_SECRET
+          }
+        }
+      )
+
+      const cid = response.data.IpfsHash
+      console.log("IPFS CID:", cid)
+
+      const tx = await executeTransaction(proof, publicSignals, cid)
+      console.log(tx)
+    } catch (error) {
+      console.error("Error uploading to IPFS: ", error)
+    }
   }
 
   return (
