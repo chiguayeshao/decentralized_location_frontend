@@ -5,7 +5,7 @@ import dynamic from "next/dynamic"
 
 // 使用 dynamic 导入 Google 地图组件，以确保只在客户端加载
 const Map = dynamic(() => import("../components/Map"), {
-  loading: () => <p>Loading Map...</p>,
+  loading: () => <p>Loading Map.....</p>,
   ssr: false // 禁止在服务器端渲染
 })
 
