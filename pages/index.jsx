@@ -22,8 +22,9 @@ const Home = () => {
         <div className="w-full h-[600px]">
           <Map />
         </div>
-        {/* 右侧抽屉 */}
-        <DrawerCard />
+        <div className=" pt-10">
+          <DrawerCard />
+        </div>
       </main>
     </div>
   )
