@@ -1,71 +1,39 @@
-import React, { useEffect, useRef } from "react"
-import { Loader } from "@googlemaps/js-api-loader"
+import React, { useEffect, useState } from "react"
+import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api"
+
+const containerStyle = {
+  width: "100%",
+  height: "600px"
+}
 
 const Map = () => {
-  const mapRef = useRef(null)
-  const mapInstance = useRef(null) // 使用 ref 存储 map 实例
+  const [currentPosition, setCurrentPosition] = useState({ lat: 0, lng: 0 })
 
   useEffect(() => {
-    const loader = new Loader({
-      apiKey: "AIzaSyALT7b73K9O5eYodYZYFVDpFuNDoSKfZQE",
-      version: "weekly",
-      libraries: ["places"]
-    })
-
-    const getCurrentLocation = () => {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            console.log(position)
-            const { latitude, longitude } = position.coords
-            initializeMap(latitude, longitude)
-          },
-          (error) => {
-            console.error("Error getting current location:", error)
-          }
-        )
-      } else {
-        console.error("Geolocation is not supported by this browser.")
-      }
-    }
-
-    const initializeMap = (latitude, longitude) => {
-      loader.load().then(() => {
-        if (google && google.maps) {
-          mapInstance.current = new google.maps.Map(mapRef.current, {
-            center: { lat: latitude, lng: longitude },
-            zoom: 12
-          })
-
-          new google.maps.Marker({
-            position: { lat: latitude, lng: longitude },
-            map: mapInstance.current,
-            title: "当前位置"
-          })
-        }
+    navigator.geolocation.getCurrentPosition((position) => {
+      setCurrentPosition({
+        lat: position.coords.latitude,
+        lng: position.coords.longitude
       })
-    }
-
-    getCurrentLocation()
-
-    const watchId = navigator.geolocation.watchPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords
-        if (mapInstance.current) {
-          mapInstance.current.panTo({ lat: latitude, lng: longitude })
-        }
-      },
-      (error) => {
-        console.error("Error getting current location:", error)
-      }
-    )
-
-    return () => {
-      navigator.geolocation.clearWatch(watchId)
-    }
+    })
   }, [])
 
-  return <div ref={mapRef} style={{ width: "100%", height: "100%" }} />
+  return (
+    <LoadScript googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}>
+      <GoogleMap
+        mapContainerStyle={containerStyle}
+        center={currentPosition}
+        zoom={15}
+      >
+        <Marker
+          position={currentPosition}
+          icon={{
+            url: "http://maps.google.com/mapfiles/ms/icons/red-dot.png"
+          }}
+        />
+      </GoogleMap>
+    </LoadScript>
+  )
 }
 
 export default Map
