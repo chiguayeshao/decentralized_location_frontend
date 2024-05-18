@@ -9,15 +9,18 @@ import {
 import { Button } from "@/components/ui/button"
 import { generateProof, executeTransaction } from "@/lib/zkProofs"
 import axios from "axios"
-import { Loader } from "lucide-react"
-import { useToast } from "@/components/ui/use-toast"
 
 const PINATA_API_KEY = process.env.NEXT_PUBLIC_PINATA_API_KEY
 const PINATA_API_SECRET = process.env.NEXT_PUBLIC_PINATA_API_SECRET
+import { useToast } from "@/components/ui/use-toast"
 
 const CheckInCard = () => {
   const { toast } = useToast()
-  const [loading, setLoading] = useState(false)
+
+  const testBorder = {
+    longitude: 114.1693611,
+    latitude: 22.3193039
+  }
 
   const [zkProofInput, setZkProofInput] = useState({
     longitude: 0,
@@ -32,29 +35,40 @@ const CheckInCard = () => {
     navigator.geolocation.getCurrentPosition((position) => {
       const longitude = Number(position.coords.longitude) * 10 ** 7
       const latitude = Number(position.coords.latitude) * 10 ** 7
+      const minLongitude = Number(testBorder.longitude) * 10 ** 7 - 1000
+      const maxLongitude = Number(testBorder.longitude) * 10 ** 7 + 1000
+      const minLatitude = Number(testBorder.latitude) * 10 ** 7 - 1000
+      const maxLatitude = Number(testBorder.latitude) * 10 ** 7 + 1000
+
+      console.log(longitude, latitude)
+      console.log(minLongitude, maxLongitude, minLatitude, maxLatitude)
 
       setZkProofInput({
         longitude: longitude,
-        minLongitude: longitude - 1,
-        maxLongitude: longitude + 1,
+        minLongitude: minLongitude,
+        maxLongitude: maxLongitude,
         latitude: latitude,
-        minLatitude: latitude - 1,
-        maxLatitude: latitude + 1
+        minLatitude: minLatitude,
+        maxLatitude: maxLatitude
       })
     })
   }, [])
 
-  const formatTxHash = (hash) => {
-    return `${hash.slice(0, 6)}...${hash.slice(-6)}`
-  }
-
   const handleCheckIn = async () => {
-    setLoading(true)
-    try {
-      const { proof, publicSignals } = await generateProof(zkProofInput)
-      console.log("proof", proof)
-      console.log("publicSignals", publicSignals)
+    const { proof, publicSignals } = await generateProof(zkProofInput)
+    console.log("proof", proof)
+    console.log("publicSignals", publicSignals)
 
+    if (proof == "") {
+      toast({
+        title: "Unable to generate proof",
+        description:
+          "Please check if the current location meets the activity requirements",
+        status: "error",
+        duration: 5000, // 持续时间 (ms)
+        isClosable: true // 是否可关闭
+      })
+    } else {
       const formData = new FormData()
       formData.append("file", new Blob([proof], { type: "application/json" }))
 
@@ -71,55 +85,55 @@ const CheckInCard = () => {
       })
       formData.append("pinataOptions", options)
 
-      const response = await axios.post(
-        "https://api.pinata.cloud/pinning/pinFileToIPFS",
-        formData,
-        {
-          maxBodyLength: "Infinity",
-          headers: {
-            "Content-Type": `multipart/form-data; boundary=${formData._boundary}`,
-            pinata_api_key: PINATA_API_KEY,
-            pinata_secret_api_key: PINATA_API_SECRET
+      try {
+        const response = await axios.post(
+          "https://api.pinata.cloud/pinning/pinFileToIPFS",
+          formData,
+          {
+            maxBodyLength: "Infinity",
+            headers: {
+              "Content-Type": `multipart/form-data; boundary=${formData._boundary}`,
+              pinata_api_key: PINATA_API_KEY,
+              pinata_secret_api_key: PINATA_API_SECRET
+            }
           }
-        }
-      )
+        )
 
-      const cid = response.data.IpfsHash
-      console.log("IPFS CID:", cid)
+        const cid = response.data.IpfsHash
+        console.log("IPFS CID:", cid)
 
-      const tx = await executeTransaction(proof, publicSignals, cid)
-      const explorerUrl = `https://sepolia.etherscan.io/tx/${tx.hash}`
-      console.log(tx)
-      toast({
-        title: "Successful",
-        description: (
-          <div className="flex flex-row gap-2">
-            <div>Transaction Hash:</div>
-            <a
-              href={explorerUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ color: "#3182ce", textDecoration: "underline" }}
-            >
-              {formatTxHash(tx.hash)}
-            </a>
-          </div>
-        ),
-        status: "success",
-        duration: 5000,
-        isClosable: true
-      })
-    } catch (error) {
-      console.error("Error uploading to IPFS: ", error)
-      toast({
-        title: "Failed",
-        description: error.message,
-        status: "error",
-        duration: 5000,
-        isClosable: true
-      })
-    } finally {
-      setLoading(false)
+        const tx = await executeTransaction(proof, publicSignals, cid)
+        const explorerUrl = `https://sepolia.etherscan.io/tx/${tx.hash}`
+        console.log(tx)
+        toast({
+          title: "Successful",
+          description: (
+            <div>
+              Transaction Hash:
+              <a
+                href={explorerUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: "#3182ce", textDecoration: "underline" }}
+              >
+                {`${tx.hash}`}
+              </a>
+            </div>
+          ),
+          status: "success",
+          duration: 5000, // 持续时间 (ms)
+          isClosable: true // 是否可关闭
+        })
+      } catch (error) {
+        console.error("Error uploading to IPFS: ", error)
+        toast({
+          title: "Failed",
+          description: error.message,
+          status: "error",
+          duration: 5000, // 持续时间 (ms)
+          isClosable: true // 是否可关闭
+        })
+      }
     }
   }
 
@@ -197,16 +211,8 @@ const CheckInCard = () => {
             console.log("zkProofInput", zkProofInput)
             handleCheckIn()
           }}
-          disabled={loading}
         >
-          {loading ? (
-            <div className="flex flex-row gap-2">
-              <Loader className="mr-2 h-4 w-4 animate-spin" />
-              <div>Loading....</div>
-            </div>
-          ) : (
-            "签到"
-          )}
+          签到
         </Button>
       </CardContent>
     </Card>
