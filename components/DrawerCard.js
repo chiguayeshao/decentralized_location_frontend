@@ -27,7 +27,7 @@ export default function DrawerCard() {
         </DrawerTrigger>
         <DrawerContent>
           <DrawerHeader>
-            <DrawerTitle>ZK Proof</DrawerTitle>
+            <DrawerTitle>ZK Location Proof</DrawerTitle>
             <DrawerDescription>
               Generate your proof to participate in activities
             </DrawerDescription>
