@@ -28,7 +28,9 @@ export default function DrawerCard() {
         <DrawerContent>
           <DrawerHeader>
             <DrawerTitle>ZK Proof</DrawerTitle>
-            <DrawerDescription>立刻生成你的proof参与活动</DrawerDescription>
+            <DrawerDescription>
+              Generate your proof to participate in activities
+            </DrawerDescription>
           </DrawerHeader>
           <CheckInCard />
           <DrawerFooter>

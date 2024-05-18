@@ -154,7 +154,7 @@ const CheckInCard = () => {
   return (
     <Card style={{ marginBottom: "20px" }}>
       <CardHeader>
-        <CardTitle>活动信息</CardTitle>
+        <CardTitle>Event information</CardTitle>
       </CardHeader>
       <CardContent
         style={{ display: "flex", alignItems: "center" }}
@@ -226,7 +226,7 @@ const CheckInCard = () => {
             handleCheckIn()
           }}
         >
-          签到
+          CHECK IN
         </Button>
       </CardContent>
     </Card>
