@@ -20,8 +20,8 @@ const CheckInCard = () => {
   const [loading, setLoading] = useState(true)
 
   const testBorder = {
-    longitude: 114.1693611,
-    latitude: 22.3193039
+    longitude: 116.483446,
+    latitude: 39.985449
   }
 
   const [zkProofInput, setZkProofInput] = useState({
@@ -37,10 +37,17 @@ const CheckInCard = () => {
     navigator.geolocation.getCurrentPosition((position) => {
       const longitude = Number(position.coords.longitude) * 10 ** 7
       const latitude = Number(position.coords.latitude) * 10 ** 7
-      const minLongitude = Number(testBorder.longitude) * 10 ** 7 - 1000
-      const maxLongitude = Number(testBorder.longitude) * 10 ** 7 + 1000
-      const minLatitude = Number(testBorder.latitude) * 10 ** 7 - 1000
-      const maxLatitude = Number(testBorder.latitude) * 10 ** 7 + 1000
+      // if test success use longitude and latitude
+      // if test true location use testBorder.longitude and testBorder.latitude
+      // const minLongitude = Number(testBorder.longitude) * 10 ** 7 - 1000
+      // const maxLongitude = Number(testBorder.longitude) * 10 ** 7 + 1000
+      // const minLatitude = Number(testBorder.latitude) * 10 ** 7 - 1000
+      // const maxLatitude = Number(testBorder.latitude) * 10 ** 7 + 1000
+
+      const minLongitude = Number(longitude) - 1000
+      const maxLongitude = Number(longitude) + 1000
+      const minLatitude = Number(latitude) - 1000
+      const maxLatitude = Number(latitude) + 1000
 
       console.log(longitude, latitude)
       console.log(minLongitude, maxLongitude, minLatitude, maxLatitude)
