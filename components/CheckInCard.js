@@ -217,7 +217,7 @@ const CheckInCard = () => {
           </svg>
           <div>
             <CardTitle>ETH BEIJING 2024</CardTitle>
-            <CardDescription>地点：META SPACE （751店）</CardDescription>
+            <CardDescription>Location: META SPACE (751)</CardDescription>
             {/* <CardDescription>简介：这是签到场地的简介。</CardDescription> */}
           </div>
         </div>
