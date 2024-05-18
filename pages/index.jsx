@@ -5,10 +5,9 @@ import dynamic from "next/dynamic"
 import { ConnectButton } from "@rainbow-me/rainbowkit"
 import { Toaster } from "@/components/ui/toaster"
 
-// 使用 dynamic 导入 Google 地图组件，以确保只在客户端加载
 const Map = dynamic(() => import("../components/Map"), {
   loading: () => <p>Loading Map.....</p>,
-  ssr: false // 禁止在服务器端渲染
+  ssr: false
 })
 
 const Home = () => {
@@ -21,12 +20,12 @@ const Home = () => {
       </Head>
 
       <main className={styles.main}>
-        <ConnectButton />
-        <div className="w-full h-[600px]">
-          <Map />
-        </div>
-        <div className=" pt-10">
+        <div className="flex flex-col md:flex-row items-center justify-between w-full p-4">
+          <ConnectButton />
           <DrawerCard />
+        </div>
+        <div className="w-full h-[600px] mt-4">
+          <Map />
         </div>
       </main>
       <Toaster />

@@ -17,14 +17,13 @@ export default function DrawerCard() {
   const proofs = [
     { latitude: "39.9042", longitude: "116.4074" },
     { latitude: "34.0522", longitude: "118.2437" }
-    // 你可以添加更多的 proof 数据
   ]
 
   return (
     <div>
       <Drawer>
         <DrawerTrigger>
-          <Button variant="outline">Open Sidebar</Button>
+          <Button variant="outline">CHECK IN</Button>
         </DrawerTrigger>
         <DrawerContent>
           <DrawerHeader>
