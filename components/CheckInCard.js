@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button"
 import { generateProof, executeTransaction } from "@/lib/zkProofs"
 import axios from "axios"
 import { Loader } from "lucide-react"
+import { useNetwork } from "wagmi"
 
 const PINATA_API_KEY = process.env.NEXT_PUBLIC_PINATA_API_KEY
 const PINATA_API_SECRET = process.env.NEXT_PUBLIC_PINATA_API_SECRET
@@ -24,6 +25,16 @@ const CheckInCard = () => {
     longitude: 116.483446,
     latitude: 39.985449
   }
+
+  const { chain } = useNetwork()
+
+  const SEPOLIA_CONTRACT_ADDRESS = "0x11f51b05e6ec6ff477821f7ac3379c77c8d6339a"
+  const SCROLL_TESTNET_CONTRACT_ADDRESS =
+    "0xaDA091B8B909cCb409462295539dA6e30De05F9a"
+  const contractAddress =
+    chain?.id === 534351
+      ? SCROLL_TESTNET_CONTRACT_ADDRESS
+      : SEPOLIA_CONTRACT_ADDRESS
 
   const [zkProofInput, setZkProofInput] = useState({
     longitude: 0,
@@ -109,8 +120,16 @@ const CheckInCard = () => {
         const cid = response.data.IpfsHash
         console.log("IPFS CID:", cid)
 
-        const tx = await executeTransaction(proof, publicSignals, cid)
-        const explorerUrl = `https://sepolia.etherscan.io/tx/${tx.hash}`
+        const tx = await executeTransaction(
+          proof,
+          publicSignals,
+          cid,
+          contractAddress
+        )
+        const explorerUrl =
+          chain?.id === 534351
+            ? `https://sepolia.scrollscan.dev/tx/${tx.hash}`
+            : `https://sepolia.etherscan.io/tx/${tx.hash}`
         const shortenedHash = `${tx.hash.slice(0, 6)}.....${tx.hash.slice(-6)}`
         console.log(tx)
         toast({

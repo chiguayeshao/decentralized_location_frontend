@@ -10,14 +10,15 @@ import {
   polygon,
   zora,
   sepolia,
-  scrollTestnet
+  scrollTestnet,
+  scrollSepolia
 } from "wagmi/chains"
 import { publicProvider } from "wagmi/providers/public"
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [
     sepolia,
-    scrollTestnet,
+    scrollSepolia,
     // mainnet,
     // polygon,
     // optimism,

@@ -6,8 +6,10 @@ import {
   WriteContractResult
 } from "@wagmi/core"
 
-const CONTRACT_ADDRESS =
+const SEPOLIA_CONTRACT_ADDRESS =
   "0x11f51b05e6ec6ff477821f7ac3379c77c8d6339a" as `0x${string}`
+const SCROLL_TESTNET_CONTRACT_ADDRESS =
+  "0xaDA091B8B909cCb409462295539dA6e30De05F9a" as `0x${string}`
 
 type ZkProofInput = {
   longitude: number
@@ -80,13 +82,14 @@ export const generateProof = async (args: ZkProofInput) => {
 export const executeTransaction = async (
   proof: any,
   publicSignals: Array<string>,
-  ipfsCid: string
+  ipfsCid: string,
+  contractAddress: `0x${string}`
 ): Promise<WriteContractResult> => {
   const abiPath = require("./abi/ZKLocationProofToken.json")
 
   // Prepare the transaction data
   const config = await prepareWriteContract({
-    address: CONTRACT_ADDRESS,
+    address: contractAddress,
     abi: abiPath.abi,
     functionName: "submitProof",
     args: [proof, publicSignals, ipfsCid]
