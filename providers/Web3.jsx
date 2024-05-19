@@ -9,18 +9,20 @@ import {
   optimism,
   polygon,
   zora,
-  sepolia
+  sepolia,
+  scrollTestnet
 } from "wagmi/chains"
 import { publicProvider } from "wagmi/providers/public"
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [
     sepolia,
-    mainnet,
-    polygon,
-    optimism,
-    arbitrum,
-    zora,
+    scrollTestnet,
+    // mainnet,
+    // polygon,
+    // optimism,
+    // arbitrum,
+    // zora,
     ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === "true" ? [goerli] : [])
   ],
   [publicProvider()]
